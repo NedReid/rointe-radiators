@@ -20,7 +20,14 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN, LOGGER, RointeCommand, RointeOperationMode, RointePreset
+from .const import (
+    DOMAIN,
+    LOGGER,
+    ROINTE_WATER_HEATER_TYPE,
+    RointeCommand,
+    RointeOperationMode,
+    RointePreset,
+)
 from .coordinator import RointeDataUpdateCoordinator
 from .entity import RointeRadiatorEntity
 
@@ -50,7 +57,10 @@ async def async_setup_entry(
 
     # Register the Entity classes and platform on the coordinator.
     coordinator.add_entities_for_seen_keys(
-        async_add_entities, [RointeHaClimate], "climate"
+        async_add_entities,
+        [RointeHaClimate],
+        "climate",
+        device_filter=lambda device: device.type != ROINTE_WATER_HEATER_TYPE,
     )
 
 

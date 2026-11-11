@@ -8,5 +8,5 @@
   "issue_tracker": "https://github.com/tggm/rointe-radiators/issues",
   "quality_scale": "internal",
   "requirements": ["rointe-sdk==1.6.0"],
-  "version": "2.2.1"
+  "version": "2.3.0"
 }

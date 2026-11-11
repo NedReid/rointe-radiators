@@ -16,5 +16,18 @@
     "abort": {
       "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
     }
+  },
+  "entity": {
+    "water_heater": {
+      "rointe_water_heater": {
+        "state": {
+          "auto": "Auto",
+          "comfort": "Comfort",
+          "manual": "Manual",
+          "eco": "Eco",
+          "off": "Off"
+        }
+      }
+    }
   }
 }

@@ -1,5 +1,10 @@
 # Changelog
 
+## V2.3.0
+
+- Add dedicated water heater entities for ACS devices
+- Support water temperature, Manual, Auto, Eco, Comfort, and Off controls
+
 ## V2.2.1
 
 - Updated the repository name to rointe-radiators

@@ -9,7 +9,12 @@ LOGGER = logging.getLogger(__package__)
 
 DOMAIN = "rointe"
 DEVICE_DOMAIN = "climate"
-PLATFORMS: list[Platform] = [Platform.CLIMATE, Platform.SENSOR, Platform.UPDATE]
+PLATFORMS: list[Platform] = [
+    Platform.CLIMATE,
+    Platform.SENSOR,
+    Platform.UPDATE,
+    Platform.WATER_HEATER,
+]
 CONF_USERNAME = "rointe_username"
 CONF_PASSWORD = "rointe_password"
 CONF_INSTALLATION = "rointe_installation"
@@ -17,6 +22,7 @@ CONF_INSTALLATION = "rointe_installation"
 ROINTE_MANUFACTURER = "Rointe"
 
 ROINTE_SUPPORTED_DEVICES = ["radiator", "towel", "therm", "radiatorb", "acs", "oval_towel"]
+ROINTE_WATER_HEATER_TYPE = "acs"
 
 RADIATOR_DEFAULT_TEMPERATURE = 20
 
@@ -39,6 +45,7 @@ class RointeCommand(StrEnum):
     SET_TEMP = "cmd_set_temp"
     SET_PRESET = "cmd_set_preset"
     SET_HVAC_MODE = "cmd_set_hvac_mode"
+    SET_WATER_HEATER_MODE = "cmd_set_water_heater_mode"
 
 
 class RointeOperationMode(StrEnum):

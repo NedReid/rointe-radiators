@@ -83,6 +83,7 @@ class RointeDataUpdateCoordinator(DataUpdateCoordinator[dict[str, RointeDevice]]
         async_add_entities: AddEntitiesCallback,
         entity_constructor_list: list[Any],
         platform: str,
+        device_filter: Callable[[RointeDevice], bool] | None = None,
     ) -> None:
         """Add entities for new devices, for a given platform.
 
@@ -97,7 +98,9 @@ class RointeDataUpdateCoordinator(DataUpdateCoordinator[dict[str, RointeDevice]]
         new_entities: list = []
 
         for device_id, device in discovered_devices.items():
-            if device_id in self.unregistered_keys[platform]:
+            if device_id in self.unregistered_keys[platform] and (
+                device_filter is None or device_filter(device)
+            ):
                 new_entities.extend(
                     [
                         constructor(device, self)

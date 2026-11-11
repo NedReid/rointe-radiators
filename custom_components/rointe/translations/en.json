@@ -16,5 +16,18 @@
                 "title": "Fill in your Rointe Connect information"
             }
         }
+    },
+    "entity": {
+        "water_heater": {
+            "rointe_water_heater": {
+                "state": {
+                    "auto": "Auto",
+                    "comfort": "Comfort",
+                    "manual": "Manual",
+                    "eco": "Eco",
+                    "off": "Off"
+                }
+            }
+        }
     }
 }

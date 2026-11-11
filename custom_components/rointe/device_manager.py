@@ -10,6 +10,10 @@ from rointesdk.device import RointeDevice, ScheduleMode
 from rointesdk.dto import EnergyConsumptionData
 from rointesdk.model import RointeProduct
 from rointesdk.rointe_api import ApiResponse, RointeAPI
+from rointesdk.settings import (
+    FIREBASE_DEFAULT_URL,
+    FIREBASE_DEVICE_DATA_PATH_BY_ID,
+)
 from rointesdk.utils import get_product_by_type_version
 
 from homeassistant.components.climate import PRESET_COMFORT, PRESET_ECO, HVACMode
@@ -301,6 +305,9 @@ class RointeDeviceManager:
         if command == RointeCommand.SET_HVAC_MODE:
             return await self._set_device_mode(device, arg)
 
+        if command == RointeCommand.SET_WATER_HEATER_MODE:
+            return await self._set_water_heater_mode(device, arg)
+
         LOGGER.warning("Ignoring unsupported command: %s", command)
         return False
 
@@ -382,6 +389,64 @@ class RointeDeviceManager:
             device.mode = RointeOperationMode.MANUAL.value
 
         return True
+
+    async def _set_water_heater_mode(
+        self, device: RointeDevice, operation_mode: str
+    ) -> bool:
+        """Set a water heater mode without changing its target temperature."""
+
+        if operation_mode not in (
+            RointeOperationMode.AUTO,
+            RointeOperationMode.MANUAL,
+            RointePreset.OFF,
+        ):
+            LOGGER.warning("Invalid water heater mode: %s", operation_mode)
+            return False
+
+        if operation_mode == RointePreset.OFF:
+            body = {"power": False, "status": RointePreset.OFF.value}
+        else:
+            body = {
+                "power": True,
+                "mode": operation_mode,
+                "status": RointePreset.NONE.value,
+            }
+
+        result: ApiResponse = await self.hass.async_add_executor_job(
+            self._patch_water_heater_mode, device, body
+        )
+
+        if not result.success:
+            LOGGER.debug("_set_water_heater_mode failed: %s", result.error_message)
+            device.hass_available = False
+            return False
+
+        device.power = operation_mode != RointePreset.OFF
+        device.preset = (
+            RointePreset.OFF if operation_mode == RointePreset.OFF else RointePreset.NONE
+        )
+        if operation_mode != RointePreset.OFF:
+            device.mode = operation_mode
+
+        return True
+
+    def _patch_water_heater_mode(
+        self, device: RointeDevice, body: dict[str, Any]
+    ) -> ApiResponse:
+        """Patch only the fields changed by the water heater app."""
+
+        # The SDK's radiator mode command sets an ACS target temperature to 20°C.
+        # Its partial-update helper is needed here to preserve the water setpoint.
+        if not self.rointe_api._ensure_valid_auth():
+            return ApiResponse(False, None, "Invalid authentication.")
+
+        url = "{}{}".format(
+            FIREBASE_DEFAULT_URL,
+            FIREBASE_DEVICE_DATA_PATH_BY_ID.format(device.id),
+        )
+        return self.rointe_api._send_patch_request(
+            url, {"auth": self.rointe_api.auth_token}, body
+        )
 
     async def _set_device_preset(self, device: RointeDevice, preset: str) -> bool:
         """Set device preset mode."""

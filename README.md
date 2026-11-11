@@ -11,12 +11,14 @@ A minimal integration for Rointe radiators in Home Assistant. 🏡
 - Series-D Towel rails
 - Oval Towels
 - Thermostats
+- Rome/Coralia water heaters (experimental)
 
 ## Features
 
 - Ability to control the temperature
 - Provides a sensor with the current temperature, as measured by the device.
 - Choose between presets (Eco, Comfort) or Manual Mode
+- Control water heater temperature and Manual, Auto, Eco, Comfort, and Off modes
 - Notification of firmware updates available
 - Energy data (Current power and consumed energy)
 
